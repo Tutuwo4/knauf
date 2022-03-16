@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:azure-cosmos-db-connector-mule-4="http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4 http://www.mulesoft.org/schema/mule/azure-cosmos-db-connector-mule-4/current/mule-azure-cosmos-db-connector-mule-4.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd">
+	<sub-flow name="postCostumer" doc:id="f55efd04-f7e6-44aa-89c3-99bd3c3007dd" >
+		<logger level="INFO" doc:name="Logger" doc:id="b58421f3-bde4-49f5-968d-99ff2e6bd8c9" message="Flow Start" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="6a4831f3-91e9-4c43-9e08-34c51dc84a87">
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="dd643958-3e20-4164-a0ac-901e05f77521" name="PostCosmoDB" />
+			</route>
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="d3e5a193-7803-4529-b4fe-631645c819ef" name="PostSFDC" />
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Logger" doc:id="48e521ab-0f9e-46ae-87e9-82b8b36c3616" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="putCostumer" doc:id="0be48333-fa26-4db1-b0f2-1324fdd18bf7" >
+		<logger level="INFO" doc:name="Logger" doc:id="4aa62333-de36-4e55-a51c-f11e0110770c" message="Flow Start" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="6a54da4b-cebf-4ddc-bf82-1fcae60e939b">
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="37d5ddab-5e47-417e-a5f5-90dfde2d941a" name="PutCosmoDB" />
+			</route>
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="62215eac-88b1-40dd-bc2d-6144c34b5146" name="PutSFDC" />
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Logger" doc:id="b0c7b242-b684-4743-81ad-77a446073ea4" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="getCostumer" doc:id="92601f2a-dfe0-4625-8b3c-f120ad07a534" >
+		<logger level="INFO" doc:name="Logger" doc:id="6856d2fd-2370-4a20-860b-770c86951799" message="Flow Start" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="b6de5aee-8517-4b9e-a551-07c92cb32552">
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="b73b932b-0b15-4592-b7f4-7d69653016cc" name="GetCosmoDB" />
+			</route>
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="f414694c-933d-4020-9da1-89e77a98295a" name="GetSFDC" />
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Logger" doc:id="77f548ec-c99d-42c8-bf8d-8d15c2d6ab50" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="PostCosmoDB" doc:id="aa766d31-b0c6-46c6-babc-6d6d84f3d2da" >
+		<logger level="INFO" doc:name="Logger" doc:id="99c79e9a-14ea-4eee-9e44-17f37a37e6e1" message="Flow Start" />
+		<mongo:insert-documents doc:name="Insert documents" doc:id="69d20eec-86c9-436f-a213-2376be2e270a" config-ref="MongoDB_Config" collectionName="costumer">
+			<mongo:documents ><![CDATA[#[[payload]]]]></mongo:documents>
+		</mongo:insert-documents>
+		<logger level="INFO" doc:name="Logger" doc:id="7f1977fb-5059-4ac0-982a-9baff8b9f144" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="PutCosmoDB" doc:id="f06d7643-70f8-4b8b-aca0-908069b9110e" >
+		<logger level="INFO" doc:name="Logger" doc:id="1f954f59-3685-4be1-b081-2d538fbc0337" message="Flow Start" />
+		<mongo:update-documents doc:name="Update documents" doc:id="e9fbc91c-db19-45c7-af5c-2431b478d8b2" config-ref="MongoDB_Config" collectionName="costumer">
+			<mongo:query ><![CDATA[#[customerId: payload.customerId]]]></mongo:query>
+		</mongo:update-documents>
+		<logger level="INFO" doc:name="Logger" doc:id="6394f1f3-3827-4302-b356-c287d0f458e3" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="GetCosmoDB" doc:id="f4b5e771-acb7-4015-ae87-933ae29491b2" >
+		<logger level="INFO" doc:name="Logger" doc:id="2a9467d0-c671-4e43-b508-f5a7d78475e8" message="Flow Start" />
+		<ee:transform doc:name="Transform Message" doc:id="714c0171-1366-42c8-b02a-43d271558114">
+			<ee:message>
+			<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customerId": attributes.queryParams.costumerId
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<mongo:find-documents doc:name="Find documents" doc:id="a717a7ea-f968-45ef-8818-bfed1195f27f" config-ref="MongoDB_Config" collectionName="costumer" fields=",">
+			<mongo:query ><![CDATA[#[payload]]]></mongo:query>
+		</mongo:find-documents>
+		<ee:transform doc:name="Transform Message" doc:id="a33d33f4-3fec-43ea-bd3b-a0a1c5111447" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (value,index) ->{
+    customerId: value.customerId,
+    firstName: value.firstName,
+    address: value.address
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="309a7e5f-8313-448a-a799-5c56f632fb28" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a92bbeaa-979e-4484-b711-b43b8fed6605" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="PostSFDC" doc:id="50e5eaff-9691-4d18-a0c4-78f520954995" >
+		<logger level="INFO" doc:name="Logger" doc:id="a8dfc63f-1d96-4826-b5bd-147209e28208" message="Flow Start" />
+		<ee:transform doc:name="Transform Message" doc:id="45871649-215f-460a-b265-bf9c450fe6ea" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[
+    Title: payload.customerId,
+    FirstName: payload.personalInformation.firstName,
+    LastName: payload.personalInformation.lastName,
+    Department: payload.personalInformation.companyName,
+    Email: payload.personalInformation.email,
+    Phone: payload.personalInformation.phone
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Contact" doc:name="Create" doc:id="406b3902-befc-424b-922c-88fcf6cf5087" config-ref="Salesforce_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6c71582a-775d-4895-a26d-f7a689162d40" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b7580e03-78ba-4b3a-82f5-168a23279d8b" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="PutSFDC" doc:id="50800eff-6ee2-45f9-884b-5aa740eb77e3" >
+		<logger level="INFO" doc:name="Logger" doc:id="642717db-3f7e-4503-ac35-dcbb411f8afe" message="Flow Start" />
+		<ee:transform doc:name="Transform Message" doc:id="20a17f58-b991-4f63-b683-39a32bc192ce" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[
+    Title: payload.customerId,
+    FirstName: payload.personalInformation.firstName,
+    LastName: payload.personalInformation.lastName,
+    Department: payload.personalInformation.companyName,
+    Email: payload.personalInformation.email,
+    Phone: payload.personalInformation.phone
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:update doc:name="Update" doc:id="ad6d10e0-44a6-4bbb-a53f-33c3fbcba51e" config-ref="Salesforce_Config" type="Contact"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5e8af366-5706-43c7-af03-228f2189d090" message="#[payload]" />
+		<logger level="INFO" doc:name="Logger" doc:id="cfe2a6b2-b8db-4b5d-bba9-bf599b0cc709" message="Flow End" />
+	</sub-flow>
+	<sub-flow name="GetSFDC" doc:id="62dc90c9-b1c6-407d-9253-f8ec3d23848b" >
+		<logger level="INFO" doc:name="Logger" doc:id="e55d7e9c-51bd-433f-bcb5-4fcb368b5030" message="Flow Start" />
+		<logger level="INFO" doc:name="Logger" doc:id="0109fed5-e390-4b74-b711-b0844255fb07" message="#[attributes.queryParams.costumerId]"/>
+		<salesforce:query doc:name="Query" doc:id="006a6e4d-3484-43c6-95d5-6bd81040d95e" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[select Title, FirstName, LastName, Department, Email, Phone  from Contact where Title=':customerId']]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/java
+---
+{
+	customerId : attributes.queryParams.costumerId
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<logger level="INFO" doc:name="Logger" doc:id="1d310a17-e336-4985-82a3-a7928dba42a7" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ddb24165-f700-4fe4-8bdf-19d76b62976c" message="Flow End" />
+	</sub-flow>
+</mule>

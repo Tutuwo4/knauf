@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="30b28a81-6115-48ed-8c6b-f862fc112cd9" file="properties.yaml" />
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="720c073d-2619-4966-991f-07d5b0b58f9f" >
+		<salesforce:basic-connection username="danielmpereira@tutuwo.pt" password="monteiro34397" securityToken="5BzxRF7eBsqbmwuPglIAuxKy" url="https://tutuwopt-dev-ed.my.salesforce.com/services/Soap/u/54.0"/>
+	</salesforce:sfdc-config>
+	<mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="4051e9ee-3663-499b-b1f7-f21bcacd24c0" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://Tutuwo:iLI3R50OYto9uKNv@cluster0.mt736.mongodb.net/sample_mflix?retryWrites=true&amp;w=majority" />
+	</mongo:config>
+	<api-gateway:autodiscovery apiId="17699663" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="0b8d7f2b-f390-4af8-939a-66cbf7e737cc" flowRef="knaufapi-main" />
+</mule>
